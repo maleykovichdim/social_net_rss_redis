@@ -113,18 +113,14 @@ func (s *Service) Rss(ctx context.Context, uid int64) error {
 	defer rows.Close()
 
 	var out []string
-	// var out list.List
 	for rows.Next() {
 		var u int64
-		//var avatar sql.NullString
-		//var t time.Time
 		dest := []interface{}{&u}
 		if err = rows.Scan(dest...); err != nil {
 			fmt.Println("error of scanning db response" + err.Error())
 			return ErrFollowTaken
 		}
 		out = append(out, strconv.FormatInt(u, 10))
-		//out.PushBack(u)
 	}
 
 	if len(out) == 0 {
@@ -145,12 +141,8 @@ func (s *Service) Rss(ctx context.Context, uid int64) error {
 		return ErrFollowTaken
 	}
 	defer rows.Close()
-
-	//uu := make([](m.UserProfile), 0, first)
 	for rows.Next() {
 		var u m.Post
-		//var avatar sql.NullString
-		//var t time.Time
 		dest := []interface{}{&u.Id, &u.AuthorId, &u.Content, &u.CreatedAt}
 		if err = rows.Scan(dest...); err != nil {
 			fmt.Println("error of scanning db response" + err.Error())
@@ -158,9 +150,6 @@ func (s *Service) Rss(ctx context.Context, uid int64) error {
 		}
 		out_ = append(out_, u)
 	}
-	// fmt.Println(">>>>")
-	fmt.Println(out_)
-
 	//////////////
 	s.redis.PushPosts(uid, out_)
 	return nil
@@ -168,13 +157,6 @@ func (s *Service) Rss(ctx context.Context, uid int64) error {
 
 //insert follower request Test
 func (s *Service) FollowTest(ctx context.Context, iamId string, friendId string) error {
-	// uid, ok := ctx.Value(KeyAuthUserID).(int64)
-	// if !ok {
-	// 	return ErrUnauthenticated
-	// }
-	// if uid < 1 || friendId < 1 || int(uid) == friendId {
-	// 	return ErrFriendRequest
-	// }
 	query := "INSERT INTO follows (follower_id, followee_id) VALUES (?, ?)"
 	_, err := s.db.ExecContext(ctx, query, iamId, friendId)
 	if err != nil {
@@ -182,9 +164,7 @@ func (s *Service) FollowTest(ctx context.Context, iamId string, friendId string)
 	}
 	fmt.Println(iamId)
 	fmt.Println(friendId)
-
 	s.redis.PushFollower(iamId, friendId)
-
 	return nil
 }
 
@@ -245,8 +225,6 @@ func (s *Service) UserPost(ctx context.Context, uid uint64, text string) error {
 
 		for rows.Next() {
 			var u m.Follow
-			//var avatar sql.NullString
-			//var t time.Time
 			dest := []interface{}{&u.FollowerId, &u.FolloweeId}
 			if err = rows.Scan(dest...); err != nil {
 				fmt.Println("error of scanning db response Follow" + err.Error())
@@ -299,8 +277,6 @@ func (s *Service) UserPostTest(ctx context.Context, uid string, text string) err
 
 		for rows.Next() {
 			var u m.Follow
-			//var avatar sql.NullString
-			//var t time.Time
 			dest := []interface{}{&u.FollowerId, &u.FolloweeId}
 			if err = rows.Scan(dest...); err != nil {
 				fmt.Println("error of scanning db response Follow" + err.Error())

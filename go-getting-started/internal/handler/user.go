@@ -27,18 +27,9 @@ func (h *handler) userPostTest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// friendId, err_ := strconv.ParseInt(text_.FriendId, 10, 64)
-	// if err_ != nil {
-	// 	respondErr(w, err_)
-	// 	return
-	// }
 
 	ctx := r.Context()
-	// uid, ok := ctx.Value(service.KeyAuthUserID).(int64)
-	// if !ok {
-	// 	respondErr(w, service.ErrUnauthenticated)
-	// 	return
-	// }
+
 	fmt.Println(text_.AuthorId)
 	fmt.Println(text_.Content)
 	err := h.UserPostTest(ctx, text_.AuthorId, text_.Content)
@@ -47,7 +38,7 @@ func (h *handler) userPostTest(w http.ResponseWriter, r *http.Request) {
 		respondErr(w, err)
 		return
 	}
-	// respond(w, "Done", http.StatusOK)
+
 	respond(w, m.StatusResponse{Status: "Done"}, http.StatusOK)
 }
 
@@ -55,7 +46,6 @@ func (h *handler) rssTest(w http.ResponseWriter, r *http.Request) { //TODO add c
 
 	q := r.URL.Query()
 	myId := q.Get("my_id")
-	// println(myId)
 	ctx := r.Context()
 	defer r.Body.Close()
 	var uid int64
@@ -75,16 +65,13 @@ func (h *handler) rssTest(w http.ResponseWriter, r *http.Request) { //TODO add c
 		// check try to get from redis
 		if isRedisHas == false {
 			//get from DB and put redis
-
 			err = h.Rss(ctx, uid)
-
 			if err != nil {
 				respondErr(w, err)
 				return
 			}
 			isRedisHas = true
 			//
-
 		} else {
 			// get from Redis
 			println("uid")
@@ -94,7 +81,6 @@ func (h *handler) rssTest(w http.ResponseWriter, r *http.Request) { //TODO add c
 				respondErr(w, err)
 				return
 			}
-
 			respond(w, posts, http.StatusOK) //
 			return
 		}
@@ -119,7 +105,6 @@ func (h *handler) isFollowee(w http.ResponseWriter, r *http.Request) { //TODO ad
 		respond(w, isFollowee, http.StatusOK)
 		return
 	}
-
 	respond(w, isFollowee, http.StatusOK)
 }
 
@@ -127,9 +112,7 @@ func (h *handler) rss(w http.ResponseWriter, r *http.Request) { //TODO add chang
 
 	ctx := r.Context()
 	defer r.Body.Close()
-	// var uid int64
 	var err error
-	// var ok bool
 	uid, ok := ctx.Value(service.KeyAuthUserID).(int64)
 	if !ok {
 		fmt.Println("Auth error")
@@ -137,43 +120,26 @@ func (h *handler) rss(w http.ResponseWriter, r *http.Request) { //TODO add chang
 		return
 	}
 
-	// isRedisHas := false //?
 	isRedisHas, err := h.GetRedis().IsPostsExistInRedis(uid)
-
 	for {
 		// check try to get from redis
 		if !isRedisHas {
 			//get from DB and put redis
-
-			//check in redis
-
-			// if redis is empty
-
-			//fmt.Println("rss")
 			ctx := r.Context()
 			defer r.Body.Close()
-
-			fmt.Println(uid)
-			//fmt.Println(text_.Text)
 			err = h.Rss(ctx, uid)
-
 			if err != nil {
 				respondErr(w, err)
 				return
 			}
-
 			isRedisHas = true
-			//
-
 		} else {
-			// get from Redis
 			// get from Redis
 			posts, err := h.RssGet(ctx, uid)
 			if err != nil {
 				respondErr(w, err)
 				return
 			}
-
 			respond(w, posts, http.StatusOK) //
 			return
 		}
@@ -192,11 +158,6 @@ func (h *handler) followTest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// friendId, err_ := strconv.ParseInt(text_.FriendId, 10, 64)
-	// if err_ != nil {
-	// 	respondErr(w, err_)
-	// 	return
-	// }
 	err := h.FollowTest(ctx, text_.MyId, text_.FriendId)
 	if err != nil {
 		respondErr(w, err)

@@ -183,10 +183,8 @@ export default async function renderUserPersonalPage(params) {
         divFr.insertAdjacentHTML('beforeend', innerHTML);  
     }
 
+    //following
     const buttonFollow = /** @type {HTMLButtonElement} */ (page.getElementById("follow"))
- 
-
-    //  const userId = /** @type {HTMLDivElement} */ (document.getElementById('userId_'))
     try {
         var isFollowee_ = await isFollowee(user['id'].toString())
         console.log(isFollowee_)
@@ -196,7 +194,6 @@ export default async function renderUserPersonalPage(params) {
     } catch (error) {
         console.log(error)
     }
-
     buttonFollow.addEventListener("click", onFollowSubmit)
     return page
 }
@@ -209,15 +206,11 @@ export default async function renderUserPersonalPage(params) {
      const userId = /** @type {HTMLDivElement} */ (document.getElementById('userId_'))
     try {
         await follow(userId.innerText)
-
-    //     buttonFr.textContent = "friendship offered"
-    //     buttonFr.style.backgroundColor = 'orange' 
     } catch (error) {
         console.log(error)
     }
     var buttonFr = /** @type {HTMLButtonElement} */ (document.getElementById('follow'))
     buttonFr.hidden = true
-    // location.reload("/")
  }
 
 

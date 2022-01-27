@@ -22,18 +22,8 @@ import (
 
 	r "go-getting-started/internal/rss"
 
-	// m "go-getting-started/internal/common"
 	m "go-getting-started/internal/common"
 )
-
-// const (
-// 	userDB     = "root3"
-// 	passwordDB = "Aa123456$"
-
-// 	redisAddress = "localhost:6379"
-// 	redisPassword = ""
-// 	//port       = 8080
-// )
 
 var (
 	port      = env("PORT", "8080")
@@ -44,17 +34,7 @@ var (
 
 	redisAddress  = env("REDIS_ADDRESS", m.RedisAddress)
 	redisPassword = env("REDIS_PASSWORD", m.RedisPassword)
-
-	// docker version
-	// databaseURL      = env("JAWSDB_URL", "root:toor@tcp(alpha:3306)/socialnet?parseTime=true")
-	// databaseURL_read = env("JAWSDB_URL", "root:toor@tcp(slave:3306)/socialnet?parseTime=true")
-
-	tokenKey = env("TOKEN_KEY", "supersecretkeyyoushouldnotcommit")
-
-	// smtpHost     = env("SMTP_HOST", "smtp.mailtrap.io")
-	// smtpPort     = env("SMTP_PORT", "25")
-	// smtpUsername = mustEnv("SMTP_USERNAME")
-	// smtpPassword = mustEnv("SMTP_PASSWORD")
+	tokenKey      = env("TOKEN_KEY", "supersecretkeyyoushouldnotcommit")
 )
 
 func main() {
@@ -65,11 +45,6 @@ func main() {
 }
 
 func run() error {
-
-	//if databaseURL != "root3:Aa123456$@/socialnet" {
-	// if databaseURL != "root3:Aa123456$@tcp(alpha:1441)/socialnet" {
-	// 	databaseURL += `?useUnicode=true&characterEncoding=utf-8&reconnect=true`
-	// }
 
 	allowedOrigin := os.Getenv("ALLOWED_ORIGIN")
 	var useNats bool
@@ -133,9 +108,6 @@ func run() error {
 
 	defer db_read.Close()
 
-	// if err = db.Ping(); err != nil {
-	// 	return fmt.Errorf("could not ping to db: %v", err)
-	// }
 	log.Println("database opened successfully")
 	service := service.New(
 		db,

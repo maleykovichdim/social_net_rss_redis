@@ -53,15 +53,6 @@ func (rss *Rss) Init(address string, password string) error {
 		return err
 	}
 	rss.IsInitialized = true
-
-	// post := &m.Post{Id: 0, AuthorId: 0, Content: "start PUSH", CreatedAt: time.Now()}
-
-	// err = rss.PushPost(post)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return err
-	// }
-	// rss.CreateQueue(address)
 	return nil
 }
 
@@ -109,21 +100,6 @@ func (rss *Rss) PushFollower_int64(follower_id int64, followee_id int64) error {
 	return err
 }
 
-// func (rss *Rss) PushFollower(follower_id string, followee_id string) error {
-// 	println("PushFollower")
-// 	key := "follower_" + follower_id
-
-// 	i, err := strconv.ParseInt(followee_id, 10, 64)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	_, err = rss.Redis.ZAdd(ctx, key, &redis.Z{
-// 		Score:  float64(i),
-// 		Member: followee_id}).Result()
-
-// 	return err
-// }
-
 func (rss *Rss) PushPost(post *m.Post) error {
 
 	p, err := json.Marshal(post)
@@ -138,27 +114,10 @@ func (rss *Rss) PushPost(post *m.Post) error {
 		return err
 	}
 
-	// println(len(results_f))
-	// var followers []string
 	for i := 0; i < len(results_f); i++ {
 
-		// println("results_f[i]")
-		// println(results_f[i])
-
 		follower := results_f[i]
-
-		// var follower string
-		// err := json.Unmarshal([]byte(results_f[i]), &follower)
-		// if err != nil {
-		// 	return err
-		// }
-
-		// println("follower")
-		// println(follower)
-		// followers = append(followers, follower)
-
 		key := "all_posts_for_user_id_" + follower
-		// println(key)
 		exist, _ := rss.IsPostsExistInRedis_s(follower) //TODO:? add ONLY if REDIS Record exists
 		if exist {
 			// println("exist")
@@ -170,17 +129,6 @@ func (rss *Rss) PushPost(post *m.Post) error {
 				return err //todo set continue
 			}
 		}
-
-		// println(key)
-
-		// key := "user_id_" + strconv.Itoa(post.AuthorId) + "_followee_posts"
-		// _, err1 := rss.Redis.ZAdd(ctx, key, &redis.Z{
-		// 	Score:  float64(post.CreatedAt.Unix()), //Todo add something to score
-		// 	Member: p}).Result()
-
-		// if err1 != nil {
-		// 	fmt.Printf("Error: %s", err)
-		// 	return err1 //todo set continue
 	}
 
 	return nil
@@ -247,8 +195,6 @@ func (rss *Rss) GetPosts_s(uid string) ([]m.Post, error) {
 		rss.Redis.ZRemRangeByRank(ctx, key, 0, int64(numInRedis)-int64(NUM_ELEMENTS_IN_REDIS_KEY_RSS))
 	}
 
-	//TODO ADD NEW POSTS FROM REDIS
-
 	results, err := rss.Redis.ZRevRange(ctx, key, 0, -1).Result()
 	if err != nil {
 		return nil, err
@@ -270,74 +216,7 @@ func (rss *Rss) GetPosts_s(uid string) ([]m.Post, error) {
 	return posts, nil
 }
 
-// v, err := rss.Redis.Do(Ctx, "get", "key_does_not_exist").Text()
-// fmt.Printf("res=%q error=%s /n", v, err)
-// type RedisHooks struct {}
-
-// func (h *RedisHooks) BeforeProcess(ctx context.Context, cmd redis.Cmder) (context.Context, error) {
-// 	tenantID, ok := ctx.Value(TenantKey{}).(string)
-// 	if !ok {
-// 		return ctx, nil
-// 	}
-
-// 	// Update cmd there.
-// 	// For example: when use redis.set, could set newKey = tenantID + oldKey
-
-// 	return ctx, nil
-// }
-
-// member := &redis.Z{
-// 	TimePoint: float64(post.CreatedAt),
-// 	Id:        post.Id,
-// 	AuthorId:  post.AuthorId,
-// 	Content:   post.Content,
-// 	CreatedAt: post.CreatedAt,
-// }
-
-// 	v, err := rdb.Do(ctx, "get", "key_does_not_exist").Text()
-// fmt.Printf("%q %s", v, err)
-
-// ZADD key score member [score member ...]
-
-// v, err := rss.Redis.Do(
-// 	"ZADD",
-
-// 	p,
-// ).Text()
-// if err != nil {
-// 	// Handle error
-// }
-// fmt.Printf("%q %s", v, err)
-
-// pipe := rss.Redis.TxPipeline()
-// pipe.ZAdd(Ctx, "leaderboard", member)
-// rank := pipe.ZRank(Ctx, "leaderboardKey", user.Username)
-// _, err := pipe.Exec(Ctx)
-// if err != nil {
-// 	return err
-// }
-// fmt.Println(rank.Val(), err)
-// user.Rank = int(rank.Val())
-
-// func (rss *Rss) Init(address string, password string) error {
-
-// }
-
-// // we can call set with a `Key` and a `Value`.
-// err = rss.Redis.Set("name", "Elliot", 0).Err()
-// // if there has been an error setting the value
-// // handle the error
-// if err != nil {
-// 	fmt.Println(err)
-// }
-
-// val, err := rss.Redis.Get("name").Result()
-// if err != nil {
-// 	fmt.Println(err)
-// }
-
-// fmt.Println(val)
-
+//we do not use this function...............
 func (rss *Rss) CreateQueue(address string) {
 	// connection, err := rmq.OpenConnection("producer", "tcp", address, 2, nil)
 	// if err != nil {
